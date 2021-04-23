@@ -1,37 +1,52 @@
-#![allow(non_camel_case_types)]
-/*
- Dead code means that is prototype of a function
- 
- */
+mod klle;
+
 /* arch-part */
 #[allow(dead_code)]
 type b8 = bool;
 
-/**
- * kernel linked list element
- */
 #[allow(dead_code)]
-struct klle {
-	data : *mut usize,       /* data pointer */
-	next : *mut klle,  /* next member pointer */
-	prev : *mut klle,  /* next member pointer */
+struct klle_test {
+	data : *mut u8,             /* data pointer */
+	next : *mut klle_test,      /* next member pointer */
+	prev : *mut klle_test,      /* next member pointer */
 }
-#[allow(dead_code)]
-type klle_t = klle;
 
+type klle_test_t = klle_test;
+/*
+let nurse_txt : [u8; 16] = "!nurse";
+let m0_txt : u8[] = "0";
+let m1_txt : u8[] = "1";
+let m2_txt : u8[] = "2";
+let m3_txt : u8[] = "3";
+let m4_txt : u8[] = "4";
+let m5_txt : u8[] = "5";
+let m6_txt : u8[] = "6";
+let m7_txt : u8[] = "7";
+let m8_txt : u8[] = "8";
+let m9_txt : u8[] = "9";
 
+*/
+/* test elemts, every element is in one pos for easy debugging */
+/*
+let mut test_nurse : klle_test_t;
+let mut test_elem0 : klle_test_t;
+let mut test_elem1 : klle_test_t;
+let mut test_elem2 : klle_test_t;
+let mut test_elem3 : klle_test_t;
+let mut test_elem4 : klle_test_t;
+let mut test_elem5 : klle_test_t;
+let mut test_elem6 : klle_test_t;
+let mut test_elem7 : klle_test_t;
+let mut test_elem8 : klle_test_t;
+let mut test_elem9 : klle_test_t;
 
-/* functions */
-#[allow(dead_code)]
-#[inline(always)]
-fn kllist_empty(nurse : *mut klle_t)->b8
+*/
+fn main()
 {
-    let result : b8 = unsafe {(*nurse).next == nurse};
-    return result;
-}
+    let mut test_nurse : klle_test_t;
+  kllist_einit(test_nurse, "nurse_txt");
 
 
-fn main() {
     println!("Hello, world!");
     
 }
