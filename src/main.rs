@@ -1,5 +1,8 @@
 #![allow(non_camel_case_types)]
-
+/**
+ * Dead code means that is prototype of a function
+ * 
+ * /
 /* arch-part */
 #[allow(dead_code)]
 type b8 = bool;
@@ -9,12 +12,14 @@ type b8 = bool;
  */
 #[allow(dead_code)]
 struct klle {
-	data : u32,       /* data pointer */ //FIXME
+	data : *mut Void,       /* data pointer */ //FIXME
 	next : *mut klle,  /* next member pointer */
 	prev : *mut klle,  /* next member pointer */
 }
 #[allow(dead_code)]
 type klle_t = klle;
+
+
 
 /* functions */
 #[allow(dead_code)]
