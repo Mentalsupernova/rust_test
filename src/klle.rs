@@ -21,221 +21,147 @@
 
 #![allow(non_camel_case_types)]
 
-mod klle {
-
 /* arch-part */
-#[allow(dead_code)]
 type b8 = bool;
 
 /**
  * kernel linked list element
  */
-#[allow(dead_code)]
-struct klle {
-	data : *mut usize,		/* data pointer */
-	next : *mut klle,  		/* next member pointer */
-	prev : *mut klle,		/* next member pointer */
+pub struct klle<T> {
+	next : *mut klle<T>,  		/* next member pointer */
+	prev : *mut klle<T>,		/* next member pointer */
+	data : T,	            /* data */
 }
-#[allow(dead_code)]
-type klle_t = klle;
+pub type klle_t<T> = klle<T>;
 
 /* functions */
 
-/**
- * init linked list elemet
- * @param elem 		- [in] linked list element to init
- * @param dts		- [in] data to set
- */
-#[allow(dead_code)]
-#[inline(always)]
-unsafe pub fn kllist_einit(elem : *mut klle_t, dts : *mut usize)
-{
-    (*elem).next = elem;
-	(*elem).prev = elem;
-	(*elem).data = dts;
+
+/* linked with resticted functionality implementation */
+impl <T> klle_t<T> {
+
+    /**
+     * init linked list elemet
+     * @param elem 		- [in] linked list element to init
+     * @param dts		- [in] data to set
+     */
+    #[inline(always)]
+    #[allow(dead_code)]
+    pub unsafe fn init(&mut self, dts : T)
+    {
+        let rself = self as *mut klle_t<T>;
+
+        (*rself).next = rself;
+	    (*rself).prev = rself;
+	    (*rself).data = dts;
+    }
+
+    /**
+     * check linked list nurse
+     * false else
+     * @param nurse 	- [in] linked list nurse
+     * @return 	        - true if empty
+     */
+    #[inline(always)]
+    #[allow(dead_code)]
+    pub unsafe fn is_empty(&mut self)->b8
+    {
+        let rself = self as *mut klle_t<T>;
+        let result : b8 = (*rself).next == rself;
+        return result;
+    }
+
+    /**
+     * add to linked list head
+     * @param nurse 	- [inout] linked list nurse
+     * @param data 		- [in] data to add
+     */
+    #[inline(always)]
+    #[allow(dead_code)]
+    pub unsafe fn addh(&mut self, new_head : *mut klle_t<T>)
+    {
+        let rself = self as *mut klle_t<T>;
+	    let old_head : *mut klle_t<T> = (*rself).next;
+
+	    (*new_head).next = old_head;
+	    (*new_head).prev = rself;
+	    (*old_head).prev = new_head;
+	    (*rself).next = new_head;
+    }
+
+    /**
+     * add to linked list tail
+     * @param nurse 	- [inout] linked list nurse
+     * @param data 		- [inout] data to add
+     */
+    #[inline(always)]
+    #[allow(dead_code)]
+    pub unsafe fn addt(&mut self, new_tail : *mut klle_t<T>)
+    {
+        let rself = self as *mut klle_t<T>;
+	    let old_tail : *mut klle_t<T> = (*rself).prev;
+
+	    (*new_tail).next = rself;
+	    (*new_tail).prev = old_tail;
+	    (*old_tail).next = new_tail;
+	    (*rself).prev = new_tail;
+    }
+
+    /**
+     * get data from linked list head,
+     * head is flushed after
+     *
+     * @param llist		- [inout] list to use
+     * @return		    - linked list head,
+     * 			          or nurse if linked list is empty
+     */
+    #[inline(always)]
+    #[allow(dead_code)]
+    pub unsafe fn geth(&mut self)->*mut klle_t<T>
+    {
+        let rself = self as *mut klle_t<T>;
+	    let old_head : *mut klle_t<T> = (*rself).next;
+
+	    (*rself).next = (*old_head).next;
+	    (*(*old_head).next).prev = rself;
+
+	    return old_head;
+    }
+
+    /**
+     * get data from linked list tail,
+     * tail is flushed after
+     *
+     * @param llist		- [inout] list to use
+     * @return		    - linked list tail,
+     * 			          or nurse if linked list is empty
+     */
+    #[inline(always)]
+    #[allow(dead_code)]
+    pub unsafe fn gett(&mut self)->*mut klle_t<T>
+    {
+        let rself = self as *mut klle_t<T>;
+	    let old_tail : *mut klle_t<T> = (*rself).prev;
+
+	    (*rself).prev = (*old_tail).prev;
+	    (*(*old_tail).prev).next = rself;
+
+	    return old_tail;
+    }
+
+    /**
+     * del entry from list, no cheking
+     * do not apply to nurse, it's will break the list
+     * @param del 		- [inout] data to del
+     */
+    #[inline(always)]
+    #[allow(dead_code)]
+    pub unsafe fn del(&mut self)
+    {
+        let rself = self as *mut klle_t<T>;
+	    (*(*rself).prev).next = (*rself).next;
+	    (*(*rself).next).prev = (*rself).prev;
+    }
+
 }
-
-/**
- * check linked list nurse
- * false else
- * @param nurse 	- [in] linked list nurse
- * @return 	        - true if empty
- */
-#[allow(dead_code)]
-#[inline(always)]
-unsafe fn kllist_empty(nurse : *mut klle_t)->b8
-{
-    let result : b8 = (*nurse).next == nurse;
-    return result;
-}
-
-/**
- * add to linked list head
- * @param nurse 	- [inout] linked list nurse
- * @param data 		- [in] data to add
- */
-#[allow(dead_code)]
-#[inline(always)]
-unsafe fn kllist_addh(nurse : *mut klle_t, new_head : *mut klle_t)
-{
-	/*
-	 * circullar linked list have rules:
-	 * nurse next is head
-	 * prev is move to head
-	 *
-	 * nurse prev is tail
-	 * next is move to tail
-	 */
-
-	/************************************************/
-	/*		        new_head  			*/
-	/* nurse.next --/   ||	 \- old_head.prev 	*/
-	/*	         /	    \/	   \			*/
-	/*	nurse --->      ---> old_head		*/
-	/************************************************/
-	let old_head : *mut klle_t = (*nurse).next;
-
-	(*new_head).next = old_head;
-	(*new_head).prev = nurse;
-	(*old_head).prev = new_head;
-	(*nurse).next = new_head;
-}
-
-/**
- * add to linked list tail
- * @param nurse 	- [inout] linked list nurse
- * @param data 		- [inout] data to add
- */
-#[allow(dead_code)]
-#[inline(always)]
-unsafe fn kllist_addt(nurse : *mut klle_t, new_tail : *mut klle_t)
-{
-	/*
-	 * circullar linked list have rules:
-	 * nurse next is head
-	 * prev is move to head
-	 *
-	 * nurse prev is tail
-	 * next is move to tail
-	 */
-
-	/************************************************/
-	/*		 new_tail  			                    */
-	/* old_tail.next/   ||	 \ nurse.prev		    */
-	/*	     /	    \/	   \			            */
-	/*    old_tail --->      ---> nurse		        */
-	/************************************************/
-	let old_tail : *mut klle_t = (*nurse).prev;
-
-	(*new_tail).next = nurse;
-	(*new_tail).prev = old_tail;
-	(*old_tail).next = new_tail;
-	(*nurse).prev = new_tail;
-}
-
-/**
- * get data from linked list head,
- * head is flushed after
- *
- * @param llist		- [inout] list to use
- * @return		    - linked list head,
- * 			          or nurse if linked list is empty
- */
-#[allow(dead_code)]
-#[inline(always)]
-unsafe fn kllist_geth(nurse : *mut klle_t)->*mut klle_t
-{
-	/*
-	 * circullar linked list have rules:
-	 * nurse next is head
-	 * prev is move to head
-	 *
-	 * nurse prev is tail
-	 * next is move to tail
-	 */
-
-	/************************************************/
-	/*	nurse --->  ||    ---> new_head		        */
-	/*	 \  \next---||----------/   /		        */
-	/*	  \---------||---------prev/		        */
-	/*              ||				                */
-	/*	     	    \/				                */
-	/*      prev <--- old_head ---> next		    */
-	/************************************************/
-	let old_head : *mut klle_t = (*nurse).next;
-
-	(*nurse).next = (*old_head).next;
-	(*(*old_head).next).prev = nurse;
-
-	return old_head;
-}
-
-/**
- * get data from linked list tail,
- * tail is flushed after
- *
- * @param llist		- [inout] list to use
- * @return		    - linked list tail,
- * 			          or nurse if linked list is empty
- */
-#[allow(dead_code)]
-#[inline(always)]
-unsafe fn kllist_gett(nurse : *mut klle_t)->*mut klle_t
-{
-	/*
-	 * circullar linked list have rules:
-	 * nurse next is head
-	 * prev is move to head
-	 *
-	 * nurse prev is tail
-	 * next is move to tail
-	 */
-
-	/************************************************/
-	/*	new_tail --->  ||    ---> nurse		        */
-	/*	 \  \prev---||----------/   /		        */
-	/*	  \---------||---------next/		        */
-	/*              ||				                */
-	/*	     	    \/				                */
-	/*      prev <--- old_tail ---> next		    */
-	/************************************************/
-	let old_tail : *mut klle_t = (*nurse).prev;
-
-	(*nurse).prev = (*old_tail).prev;
-	(*(*old_tail).prev).next = nurse;
-
-	return old_tail;
-}
-
-/**
- * del entry from list, no cheking
- * do not apply to nurse, it's will break the list
- * @param del 		- [inout] data to del
- */
-#[allow(dead_code)]
-#[inline(always)]
-unsafe fn kllist_del(del: *mut klle_t)
-{
-	/*
-	 * circullar linked list have rules:
-	 * nurse next is head
-	 * prev is move to head
-	 *
-	 * nurse prev is tail
-	 * next is move to tail
-	 */
-
-	/************************************************/
-	/*	del.prev --->       ---> del.next	*/
-	/*	 \  \next------||----------/   /	*/
-	/*	  \------------||---------prev/		*/
-	/*                     ||			*/
-	/*	     	       \/			*/
-	/*		       del 			*/
-	/************************************************/
-	(*(*del).prev).next = (*del).next;
-	(*(*del).next).prev = (*del).prev;
-}
-}
-
 
