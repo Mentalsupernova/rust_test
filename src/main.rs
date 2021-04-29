@@ -49,7 +49,8 @@ let mut test_elem9 : klle_test_t;
 //static mut nurse : Option<klle::klle_t<&str>> = None
 //
 mod viktors_linked_list;
-use viktors_linked_list;
+use viktors_linked_list::viktors_linked_list::test;
+use viktors_linked_list::viktors_linked_list::vtl;
 extern crate core;
 // use crate::viktors_linked_list::vtl;
 fn main(){
