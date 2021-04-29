@@ -45,31 +45,30 @@ let mut test_elem8 : klle_test_t;
 let mut test_elem9 : klle_test_t;
 
 */
-struct test_s<'a, T>{
-    data : T,
-    test : &'a test_s<'a,T>,
-}
 
-impl <'a,T> test_s<'a,T>{
-    fn init(&self)->&T{
-        &self.data
-    }
-}
+//static mut nurse : Option<klle::klle_t<&str>> = None
+//
+mod viktors_linked_list;
+use viktors_linked_list;
+extern crate core;
+// use crate::viktors_linked_list::vtl;
+fn main(){
 
+    let mut test = vtl {next : 0 as *mut vtl, prev : 0 as *mut vtl, data : 0};
+    println!("{:?}", test.next);
 
-//static mut nurse : Option<klle::klle_t<&str>> = None;
-
-fn main()
-{
+    //let mut test = victors_linked_list {next: 0 as *mut victors_linked_list, prev: 0 as*mut victors_linked_list};
+    // test.init();
     /*
      * let mut test_nurse : klle_test_t;
      * let tnp : *mut klle_test_t = &mut test_nurse;
      * klle::init(tnp, "nurse_txt");
      */
     //let n  = klle::init(); 
-    let g = test_s {data : 1};
+    // let g<'a> = test_s {data : 1, test : &'a g};
 
-//    let n : Option<&str> = klle {data :  "test"};
+    
+    //let n : Option<&str> = klle {data :  "test"};
     //nurse.init("nurse"); 
 
 
