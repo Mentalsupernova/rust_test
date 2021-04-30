@@ -49,15 +49,17 @@ let mut test_elem9 : klle_test_t;
 //static mut nurse : Option<klle::klle_t<&str>> = None
 //
 mod viktors_linked_list;
-use viktors_linked_list::viktors_linked_list::test;
-use viktors_linked_list::viktors_linked_list::vtl;
+use viktors_linked_list::viktors_linked_list::*;
 extern crate core;
 // use crate::viktors_linked_list::vtl;
+//
+static mut test : vtl = vtl {next : 0 as *mut vtl, prev : 0 as *mut vtl, data : 0};
+
 fn main(){
 
-    let mut test = vtl {next : 0 as *mut vtl, prev : 0 as *mut vtl, data : 0};
-    println!("{:?}", test.next);
-
+   unsafe  {
+    test.init();
+    }
     //let mut test = victors_linked_list {next: 0 as *mut victors_linked_list, prev: 0 as*mut victors_linked_list};
     // test.init();
     /*
