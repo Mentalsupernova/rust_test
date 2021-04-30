@@ -50,10 +50,12 @@ let mut test_elem9 : klle_test_t;
 //
 mod viktors_linked_list;
 use viktors_linked_list::viktors_linked_list::*;
-extern crate core;
+// extern crate core;
+
+pub type vtl_u8 = vtl<u8>;
 // use crate::viktors_linked_list::vtl;
 //
-static mut test : vtl = vtl {next : 0 as *mut vtl, prev : 0 as *mut vtl, data : 0};
+static mut test : vtl_u8 = vtl_u8 {next : 0 as *mut vtl_u8, prev : 0 as *mut vtl_u8, data : 0};
 
 fn main(){
 

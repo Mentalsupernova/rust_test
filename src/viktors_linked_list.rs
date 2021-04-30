@@ -1,10 +1,10 @@
 pub mod viktors_linked_list{
-pub struct viktors_linked_list< T>{
+pub struct viktors_linked_list<T>{
     pub next : *mut viktors_linked_list<T>,
     pub prev : *mut viktors_linked_list<T>,
     pub data : T,
 }
-pub type vtl = viktors_linked_list<u8>;
+pub type vtl<T> = viktors_linked_list<T>;
 pub fn test(){
     println!("test");
 }
